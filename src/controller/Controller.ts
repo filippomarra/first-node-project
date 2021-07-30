@@ -14,7 +14,7 @@ class Controller {
                 res.json(superHeroes);
             })
             .catch(error => {
-                console.error("Error ", error);
+                // console.error("Error ", error);
                 res.json(error);
             });            
     }
@@ -27,17 +27,19 @@ class Controller {
                 let superHero = new SuperHero();
                 superHero.name = requestSuperHero.name;
                 superHero.power = [];
-                requestPower.forEach(requestPowerItem => {
-                    let power: Power = new Power();
-                    power.ability = requestPowerItem;
-                    superHero.power.push(power);
-                });
+                if (requestPower) {
+                    requestPower.forEach(requestPowerItem => {
+                        let power: Power = new Power();
+                        power.ability = requestPowerItem;
+                        superHero.power.push(power);
+                    });
+                }
 
                 await db.manager.save(superHero);
                 res.json({message: "Successfully Saved."})
             })
             .catch(error => {
-                console.error("Error ", error);
+                // console.error("Error ", error);
                 res.json(error);
             });
     }
@@ -50,17 +52,19 @@ class Controller {
                 let requestPower = requestSuperHero.power;
                 superHero.name = requestSuperHero.name;
                 superHero.power = [];
-                requestPower.forEach(requestPowerItem => {
-                    let power: Power = new Power();
-                    power.ability = requestPowerItem;
-                    superHero.power.push(power);
-                });
+                if (requestPower) {
+                    requestPower.forEach(requestPowerItem => {
+                        let power: Power = new Power();
+                        power.ability = requestPowerItem;
+                        superHero.power.push(power);
+                    });
+                }
 
                 await db.manager.save(superHero);
                 res.json({message: "Successfully Updated."});
             })
             .catch(error => {
-                console.error("Error ", error);
+                // console.error("Error ", error);
                 res.json(error);
             });
     }
@@ -72,7 +76,7 @@ class Controller {
                 res.json(superHero);
             })
             .catch(error => {
-                console.error("Error ", error);
+                // console.error("Error ", error);
                 res.json(error);
             });
     }
@@ -82,15 +86,17 @@ class Controller {
             .then(async db => {
                 let superHero = await db.manager.findOne(SuperHero, req.params.superHeroId);
                 // delete all power first
-                superHero.power.forEach(async powerItem => {
-                    await db.manager.delete(Power, {id : powerItem.id});
-                });
+                if (superHero) {
+                    superHero.power.forEach(async powerItem => {
+                        await db.manager.delete(Power, {id : powerItem.id});
+                    });   
+                }
                 // delete our super-hero
                 await db.manager.delete(SuperHero, {id: req.params.superHeroId});
                 res.json({message: "Successfully Removed."});
             })
             .catch(error => {
-                console.error("Error ", error);
+                // console.error("Error ", error);
                 res.json(error);
             });
     }
